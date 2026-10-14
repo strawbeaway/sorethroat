@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fbf5ef">
+<title>sorethroat ♡</title>
+<style>
+:root {
+  --cream: #fbf5ef;
+  --pink: #e8a8b8;
+  --rose: #b8788b;
+  --ink: #55434a;
+  --paper: #fffdfb;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+}
+header {
+  text-align: center;
+  padding: 25px 16px 12px;
+}
+.brand {
+  color: var(--rose);
+  font-size: 35px;
+  letter-spacing: -1px;
+  margin: 8px 0;
+}
+.tagline {
+  font-style: italic;
+  font-size: 14px;
+}
+main {
+  width: min(100% - 28px, 510px);
+  margin: 22px auto 50px;
+}
+.card {
+  background: var(--paper);
+  border: 1px solid #f0dce0;
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 17px;
+  box-shadow: 0 7px 24px #b8788b0c;
+}
+h2 {
+  color: var(--rose);
+  font-size: 21px;
+  margin: 0 0 10px;
+}
+p { line-height: 1.6; }
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 145px;
+  resize: vertical;
+  border: 1px solid #ead2d9;
+  background: #fffaf9;
+  border-radius: 13px;
+  padding: 14px;
+  color: var(--ink);
+  font: 16px Georgia, serif;
+  outline-color: var(--pink);
+}
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: var(--pink);
+  color: #543943;
+  font: 16px Georgia, serif;
+  padding: 13px 16px;
+  margin-top: 12px;
+  cursor: pointer;
+}
+button:disabled { opacity: .5; cursor: wait; }
+.secondary { background: #f6e8eb; }
+.small { font-size: 12px; color: #8c737a; }
+.status {
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.counter { text-align: right; }
+footer {
+  text-align: center;
+  font-size: 12px;
+  color: #987d84;
+  padding: 12px;
+}
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div class="small">a little corner of the internet ♡</div>
+  <h1 class="brand">sorethroat</h1>
+  <div class="tagline">for the words you couldn't say.</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>leave a little here ♡</h2>
+    <p>Whatever you've been holding in, you can put it into words.</p>
+    <textarea id="message" maxlength="1000"
+      placeholder="Dear stranger, ..."></textarea>
+    <div id="count" class="small counter">0 / 1000</div>
+    <button id="send">send into the world ♡</button>
+    <div id="sendStatus" class="status" role="status"></div>
+    <p class="small">Don't include your real name, address, phone number,
+      passwords, or other identifying details.</p>
+  </section>
+
+  <section class="card">
+    <h2>read a stranger's words</h2>
+    <p>One message. One reader. A little moment of understanding.</p>
+    <button id="claim">open a message ♡</button>
+    <div id="readerArea" hidden>
+      <p id="readerMessage"></p>
+      <textarea id="reply" maxlength="1000"
+        placeholder="Write a kind reply..."></textarea>
+      <button id="sendReply">send one reply ♡</button>
+    </div>
+    <div id="readerStatus" class="status" role="status"></div>
+  </section>
+
+  <section class="card">
+    <h2>your reply, if it arrives 💌</h2>
+    <p>Check whether someone has replied to your message.
+      Opening a reply closes the exchange.</p>
+    <button class="secondary" id="checkReply">open my reply once</button>
+    <div id="replyStatus" class="status" role="status"></div>
+  </section>
+
+  <p class="small" style="text-align:center">
+    sorethroat is a place to express feelings, not an emergency
+    or counselling service. Please be kind to the stranger on the
+    other side.
+  </p>
+</main>
+<footer>made with a little softness ♡</footer>
+
+<script>
+/* Add your own Supabase project details below. */
+const SUPABASE_URL = "https://xvgxpvokmyxmnkzcxweq.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XU7jlJ_LcV4V99SyfqhNpw_e0MAW-FM";
+
+const $ = id => document.getElementById(id);
+let activeReaderToken = sessionStorage.getItem("st_reader_token");
+let activeMessage = sessionStorage.getItem("st_reader_message");
+
+function token() {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function configured() {
+  return SUPABASE_URL.startsWith("https://")
+    && !SUPABASE_URL.includes("PASTE_")
+    && !SUPABASE_KEY.includes("PASTE_")
+    && SUPABASE_KEY.length > 10;
+}
+
+async function rpc(name, params = {}) {
+  if (!configured()) {
+    throw new Error("Add your Supabase URL and publishable key in the code first.");
+  }
+  const response = await fetch(
+    SUPABASE_URL.replace(/\/$/, "") + "/rest/v1/rpc/" + name,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      },
+      body: JSON.stringify(params)
+    }
+  );
+  const data = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(data?.message || data?.hint ||
+      "The request failed. Please try again.");
+  }
+  return data;
+}
+
+function show(id, message) {
+  $(id).textContent = message;
+}
+
+function restoreReader() {
+  if (activeReaderToken && activeMessage) {
+    $("readerArea").hidden = false;
+    $("readerMessage").textContent = activeMessage;
+    $("claim").disabled = true;
+    show("readerStatus", "You have a message waiting for your reply.");
+  }
+}
+restoreReader();
+
+$("message").addEventListener("input", () => {
+  show("count", $("message").value.length + " / 1000");
+});
+
+$("send").addEventListener("click", async () => {
+  const body = $("message").value.trim();
+  if (!body) return show("sendStatus", "Write a little something first ♡");
+  $("send").disabled = true;
+  show("sendStatus", "Sending your words...");
+  try {
+    const writerToken = token();
+    const id = await rpc("submit_message", {
+      p_body: body,
+      p_writer_token: writerToken
+    });
+    const saved = JSON.parse(localStorage.getItem("st_writers") || "[]");
+    saved.push({ token: writerToken, id });
+    localStorage.setItem("st_writers", JSON.stringify(saved));
+    $("message").value = "";
+    show("count", "0 / 1000");
+    show("sendStatus",
+      "Your message has been sent ♡ Keep this browser's local data safe. " +
+      "When a reply arrives, you can open it here once.");
+  } catch (error) {
+    show("sendStatus", error.message);
+  } finally {
+    $("send").disabled = false;
+  }
+});
+
+$("claim").addEventListener("click", async () => {
+  if (activeReaderToken) {
+    return show("readerStatus", "Finish your current message first ♡");
+  }
+  $("claim").disabled = true;
+  show("readerStatus", "Finding a message...");
+  try {
+    const rows = await rpc("claim_message");
+    if (!rows || !rows.length) {
+      show("readerStatus", "No messages are waiting right now. Try again later ♡");
+      $("claim").disabled = false;
+      return;
+    }
+    activeReaderToken = rows[0].reader_token;
+    activeMessage = rows[0].message_body;
+    sessionStorage.setItem("st_reader_token", activeReaderToken);
+    sessionStorage.setItem("st_reader_message", activeMessage);
+    $("readerMessage").textContent = activeMessage;
+    $("readerArea").hidden = false;
+    show("readerStatus", "Take a breath, read gently, and reply only if you want to.");
+  } catch (error) {
+    show("readerStatus", error.message);
+    $("claim").disabled = false;
+  }
+});
+
+$("sendReply").addEventListener("click", async () => {
+  if (!activeReaderToken) {
+    return show("readerStatus", "Please open a message first.");
+  }
+  const body = $("reply").value.trim();
+  if (!body) return show("readerStatus", "Write your reply first ♡");
+  $("sendReply").disabled = true;
+  try {
+    await rpc("send_reply", {
+      p_reader_token: activeReaderToken,
+      p_reply: body
+    });
+    sessionStorage.removeItem("st_reader_token");
+    sessionStorage.removeItem("st_reader_message");
+    activeReaderToken = null;
+    activeMessage = null;
+    $("readerArea").hidden = true;
+    $("reply").value = "";
+    show("readerStatus", "Your reply has been sent. Thank you for being kind ♡");
+    $("claim").disabled = false;
+  } catch (error) {
+    show("readerStatus", error.message);
+  } finally {
+    $("sendReply").disabled = false;
+  }
+});
+
+$("checkReply").addEventListener("click", async () => {
+  $("checkReply").disabled = true;
+  show("replyStatus", "Checking for your reply...");
+  try {
+    const saved = JSON.parse(localStorage.getItem("st_writers") || "[]");
+    if (!saved.length) {
+      show("replyStatus", "No message saved in this browser yet.");
+      return;
+    }
+    for (let i = 0; i < saved.length; i++) {
+      const reply = await rpc("read_reply_once", {
+        p_writer_token: saved[i].token
+      });
+      if (reply !== null && reply !== undefined) {
+        saved.splice(i, 1);
+        localStorage.setItem("st_writers", JSON.stringify(saved));
+        show("replyStatus", reply || "Your exchange has closed ♡");
+        return;
+      }
+    }
+    show("replyStatus", "No reply yet. You can come back later ♡");
+  } catch (error) {
+    show("replyStatus", error.message);
+  } finally {
+    $("checkReply").disabled = false;
+  }
+});
+</script>
+</body>
+</html>
