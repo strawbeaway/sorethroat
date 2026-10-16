@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171714">
+<title>sorethroat ♡</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --night:#171714;
+  --panel:#201f1a;
+  --pistachio:#D8E5B5;
+  --sage:#A8BC83;
+  --chocolate:#6C493A;
+  --ivory:#F1EBDD;
+  --muted:#aaa99a;
+  --line:rgba(241,235,221,.14);
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  min-height:100vh;
+  background:var(--night);
+  color:var(--ivory);
+  font-family:Georgia,"Times New Roman",serif;
+  background-image:
+    radial-gradient(ellipse at 15% 0%,rgba(168,188,131,.08),transparent 42%),
+    radial-gradient(ellipse at 100% 100%,rgba(108,73,58,.1),transparent 40%);
+}
+button,textarea {font:inherit}
+button {cursor:pointer}
+button:disabled {opacity:.5;cursor:not-allowed}
+button:focus-visible,textarea:focus-visible {
+  outline:2px solid var(--pistachio);
+  outline-offset:3px;
+}
+.shell {width:min(100% - 28px,760px);margin:auto;padding:24px 0 55px}
+header {display:flex;justify-content:space-between;align-items:center;padding:8px 0 35px}
+.brand {color:var(--pistachio);font-size:1.35rem;letter-spacing:.07em}
+.brand span {color:var(--sage)}
+.top-note {
+  color:var(--muted);font:10px/1.6 Arial,sans-serif;
+  letter-spacing:.13em;text-align:right;text-transform:uppercase
+}
+.intro {text-align:center;margin:0 auto 30px;max-width:560px}
+.eyebrow {
+  color:var(--sage);font:10px Arial,sans-serif;
+  letter-spacing:.22em;text-transform:uppercase
+}
+h1 {
+  color:var(--pistachio);font-size:clamp(2.5rem,9vw,4.6rem);
+  font-weight:normal;letter-spacing:-.045em;margin:14px 0
+}
+.intro p {color:#c8c4b5;line-height:1.8}
+.tabs {display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:28px 0 24px}
+.tab,.quiet {
+  border:1px solid var(--line);background:transparent;color:var(--ivory);
+  border-radius:999px;padding:11px 16px;font:12px Arial,sans-serif
+}
+.tab[aria-selected=true] {background:var(--pistachio);color:#202218}
+.tab:hover,.quiet:hover {border-color:var(--sage)}
+.panel {
+  background:linear-gradient(145deg,#28261f,#1d1c18);
+  border:1px solid var(--line);border-radius:22px;
+  padding:clamp(20px,5vw,34px)
+}
+.panel h2 {color:var(--pistachio);font-size:1.6rem;font-weight:normal;margin:0 0 8px}
+.sub,.note {color:var(--muted);font:12px/1.8 Arial,sans-serif}
+.sub {margin:0 0 22px}
+label {
+  display:block;color:#d9d5c7;font:11px Arial,sans-serif;
+  letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px
+}
+textarea {
+  width:100%;min-height:140px;resize:vertical;
+  background:rgba(10,10,9,.35);color:var(--ivory);
+  border:1px solid var(--line);border-radius:15px;
+  padding:15px;line-height:1.7
+}
+textarea::placeholder {color:#77766b}
+.field-meta {
+  display:flex;justify-content:space-between;gap:8px;
+  margin:8px 2px 20px;color:var(--muted);font:11px Arial,sans-serif
+}
+.primary {
+  display:flex;justify-content:center;align-items:center;gap:9px;
+  width:100%;min-height:48px;padding:13px 18px;
+  border:1px solid var(--pistachio);border-radius:999px;
+  background:var(--pistachio);color:#22251a;
+  font:12px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase
+}
+.secondary {background:transparent;color:var(--pistachio);border-color:#66764d}
+.status {min-height:20px;margin:14px 2px 0;color:var(--sage);font:12px/1.7 Arial,sans-serif;overflow-wrap:anywhere}
+.status.error {color:#e5a1aa}
+.hidden {display:none!important}
+.note {margin-top:18px;font-size:11px}
+.divider {height:1px;background:var(--line);margin:24px 0}
+.empty {padding:20px 0;color:var(--muted);line-height:1.8}
+.reader-card {min-height:230px;display:flex;flex-direction:column;justify-content:center}
+.message-mark {color:var(--sage);font-size:2rem}
+.message-body {
+  white-space:pre-wrap;overflow-wrap:anywhere;
+  font-size:clamp(1.25rem,4vw,1.85rem);line-height:1.7
+}
+.reader-actions {display:flex;gap:10px;margin-top:25px}
+.reader-actions button {flex:1}
+.palettes {display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0 20px}
+.palette {
+  display:flex;align-items:center;gap:10px;text-align:left;
+  padding:12px 10px;border:1px solid var(--line);
+  border-radius:14px;background:#24231f;color:var(--ivory);
+  font:12px Arial,sans-serif
+}
+.palette[aria-pressed=true] {border-color:var(--pistachio);outline:1px solid var(--pistachio)}
+.swatch {width:22px;height:22px;border-radius:50%;flex-shrink:0}
+.red {background:#783D4B}.purple {background:#64528A}
+.blue {background:#A9D5F5}.gold {background:#C7AD79}
+.reply-card {border:1px solid var(--line);border-radius:16px;padding:17px;margin:12px 0}
+.reply-meta {font:10px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.reply-message {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+footer {text-align:center;color:#747367;font:10px/1.8 Arial,sans-serif;margin-top:30px}
+.cinema {
+  position:fixed;inset:0;z-index:10;display:flex;align-items:center;
+  justify-content:center;padding:24px;background:#27151B;color:#F1EBDD
+}
+.cinema-inner {width:min(100%,640px);animation:arrive .7s ease both}
+.cinema-top {
+  display:flex;justify-content:space-between;gap:12px;
+  color:#c5b8b5;font:10px Arial,sans-serif;letter-spacing:.15em;text-transform:uppercase
+}
+.cinema .message-body {margin:clamp(40px,12vh,100px) 0;font-size:clamp(1.7rem,6vw,3rem);line-height:1.5}
+.cinema .primary {background:#F1A1B4;border-color:#F1A1B4;color:#27151B}
+.cinema .secondary {border-color:#a89b9b;color:#F1EBDD}
+.close {
+  background:transparent;border:0;color:inherit;
+  font:11px Arial,sans-serif;padding:14px 0;opacity:.8
+}
+@keyframes arrive {from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px) {
+  .shell {width:calc(100% - 22px);padding-top:16px}
+  header {padding-bottom:25px}
+  .top-note {font-size:9px}
+  .reader-actions {flex-direction:column}
+  .palette {font-size:11px;padding:10px 7px}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+
+<body>
+<div class="shell">
+  <header>
+    <div class="brand">sorethroat <span>♡</span></div>
+    <div class="top-note">a little room for<br>what you can't say</div>
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow">somewhere between strangers</div>
+    <h1>Leave it here.</h1>
+    <p>Write what you need to let out. Somewhere, a stranger might understand.</p>
+  </section>
+
+  <nav class="tabs">
+    <button class="tab" id="tab-write" aria-selected="true">Write</button>
+    <button class="tab" id="tab-read" aria-selected="false">Read</button>
+    <button class="tab" id="tab-replies" aria-selected="false">Your replies</button>
+  </nav>
+
+  <section class="panel" id="view-write">
+    <h2>Put it into words.</h2>
+    <p class="sub">Your message is anonymous to other visitors. Avoid sharing names, addresses, phone numbers, or identifying details.</p>
+    <form id="write-form">
+      <label for="message-input">Your message</label>
+      <textarea id="message-input" maxlength="1000" required placeholder="You can start anywhere…"></textarea>
+      <div class="field-meta"><span>Up to 1,000 characters</span><span id="message-count">0 / 1000</span></div>
+      <button class="primary" id="send-message">Leave your message ↗</button>
+      <p class="status" id="write-status" aria-live="polite"></p>
+    </form>
+    <p class="note">Please don't use this as an emergency service. If someone is in immediate danger, contact a trusted person or local emergency services.</p>
+  </section>
+
+  <section class="panel hidden" id="view-read">
+    <h2>Listen for a moment.</h2>
+    <p class="sub">A message from someone you haven't met. You can reply, or gently skip it.</p>
+    <div id="reader-empty" class="empty">Open Read to find a message.</div>
+    <div id="reader-content" class="hidden">
+      <div class="reader-card">
+        <div class="message-mark">“</div>
+        <div class="message-body" id="reader-message"></div>
+      </div>
+      <div class="reader-actions">
+        <button class="primary" id="open-reply">Reply to this message</button>
+        <button class="quiet" id="skip-message">Skip this one</button>
+      </div>
+    </div>
+    <div id="reply-form-wrap" class="hidden">
+      <div class="divider"></div>
+      <form id="reply-form">
+        <label for="reply-input">Your reply</label>
+        <textarea id="reply-input" maxlength="1000" required placeholder="Write back, if you want to."></textarea>
+        <div class="field-meta"><span>Choose the feeling of your reply</span><span id="reply-count">0 / 1000</span></div>
+        <div class="palettes">
+          <button type="button" class="palette" data-palette="red" aria-pressed="true"><span class="swatch red"></span>Red / rose</button>
+          <button type="button" class="palette" data-palette="purple" aria-pressed="false"><span class="swatch purple"></span>Quiet purple</button>
+          <button type="button" class="palette" data-palette="blue" aria-pressed="false"><span class="swatch blue"></span>Midnight blue</button>
+          <button type="button" class="palette" data-palette="antique-gold" aria-pressed="false"><span class="swatch gold"></span>Antique gold</button>
+        </div>
+        <button class="primary" id="send-reply">Send your reply ↗</button>
+        <button class="close" id="cancel-reply" type="button">Go back to the message</button>
+      </form>
+    </div>
+    <p class="status" id="read-status" aria-live="polite"></p>
+  </section>
+
+  <section class="panel hidden" id="view-replies">
+    <h2>Someone heard you.</h2>
+    <p class="sub">Replies to messages you've left will appear here.</p>
+    <button class="primary" id="refresh-replies">Check for replies</button>
+    <p class="status" id="inbox-status" aria-live="polite"></p>
+    <div class="divider"></div>
+    <div id="inbox-list"><div class="empty">Your replies will be gathered here.</div></div>
+  </section>
+
+  <footer>take what helps. leave what doesn't.<br>sorethroat ♡</footer>
+</div>
+
+<div class="cinema hidden" id="cinema" role="dialog" aria-modal="true" aria-label="Message from a stranger">
+  <div class="cinema-inner">
+    <div class="cinema-top"><span>sorethroat ♡</span><span>a message from a stranger</span></div>
+    <div class="message-body" id="cinema-message"></div>
+    <div class="reader-actions">
+      <button class="primary" id="cinema-reply">Reply</button>
+      <button class="quiet secondary" id="cinema-skip">Skip</button>
+    </div>
+    <button class="close" id="cinema-close">Close this view</button>
+  </div>
+</div>
+
+<script>
+/* Put your own Supabase URL and publishable key below.
+   Never use your service_role key in public website code. */
+const SUPABASE_URL = "https://xvgxpvokmyxmnkzcxweq.supabase.co";
+const SUPABASE_KEY = "sb_publishable_XU7jlJ_LcV4V99SyfqhNpw_e0MAW-FM";
+
+const $ = id => document.getElementById(id);
+
+const themes = {
+  red: {
+    background:"#27151B", secondary:"#783D4B",
+    accent:"#F1A1B4", text:"#F1EBDD"
+  },
+  purple: {
+    background:"#211B35", secondary:"#64528A",
+    accent:"#C7B5F4", text:"#F1EBDD"
+  },
+  blue: {
+    background:"#171D2D", secondary:"#344F72",
+    accent:"#A9D5F5", text:"#EAF2F8"
+  },
+  "antique-gold": {
+    background:"#25221B", secondary:"#8B7754",
+    accent:"#C7AD79", text:"#F1EBDD"
+  }
+};
+
+let activeMessage = null;
+let selectedPalette = "red";
+
+function randomToken() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function storedToken(key) {
+  let token = localStorage.getItem(key);
+  if (!token) {
+    token = randomToken();
+    localStorage.setItem(key,token);
+  }
+  return token;
+}
+
+function writerTokens() {
+  try {
+    const list = JSON.parse(localStorage.getItem("st_writer_tokens") || "[]");
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberWriter(token) {
+  const list = writerTokens();
+  if (!list.includes(token)) list.push(token);
+  localStorage.setItem("st_writer_tokens",JSON.stringify(list));
+}
+
+function status(id,message,error=false) {
+  $(id).textContent = message || "";
+  $(id).classList.toggle("error",error);
+}
+
+function configReady() {
+  return SUPABASE_URL.startsWith("https://") &&
+    !SUPABASE_URL.includes("PASTE_YOUR") &&
+    SUPABASE_KEY.length > 20 &&
+    !SUPABASE_KEY.includes("PASTE_YOUR");
+}
+
+async function rpc(name,params={}) {
+  if (!configReady()) {
+    throw new Error("Add your Supabase Project URL and publishable key in the JavaScript section.");
+  }
+
+  const response = await fetch(
+    SUPABASE_URL.replace(/\/$/,"") + "/rest/v1/rpc/" + name,
+    {
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "apikey":SUPABASE_KEY,
+        "Authorization":"Bearer " + SUPABASE_KEY
+      },
+      body:JSON.stringify(params)
+    }
+  );
+
+  const raw = await response.text();
+  let data;
+  try { data = raw ? JSON.parse(raw) : null; }
+  catch { data = raw; }
+
+  if (!response.ok) {
+    const message = data && typeof data === "object"
+      ? (data.message || data.details || data.hint || JSON.stringify(data))
+      : String(data || "");
+    throw new Error(message || "Supabase request failed: " + response.status);
+  }
+  return data;
+}
+
+function showTab(tab) {
+  ["write","read","replies"].forEach(name => {
+    $("view-" + name).classList.toggle("hidden",name !== tab);
+    $("tab-" + name).setAttribute("aria-selected",String(name === tab));
+  });
+
+  if (tab === "replies") loadReplies();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function clearReader() {
+  activeMessage = null;
+  $("reader-content").classList.add("hidden");
+  $("reply-form-wrap").classList.add("hidden");
+  $("reader-empty").classList.remove("hidden");
+  $("reader-empty").textContent = "Open Read to find a message.";
+  $("reader-message").textContent = "";
+  $("reply-input").value = "";
+  $("reply-count").textContent = "0 / 1000";
+}
+
+function openCinema(body) {
+  $("cinema-message").textContent = body;
+  $("cinema").classList.remove("hidden");
+  applyCinemaTheme();
+}
+
+function closeCinema() {
+  $("cinema").classList.add("hidden");
+}
+
+function applyCinemaTheme() {
+  const theme = themes[selectedPalette];
+  $("cinema").style.background = theme.background;
+  $("cinema").style.color = theme.text;
+  const button = $("cinema-reply");
+  button.style.background = theme.accent;
+  button.style.borderColor = theme.accent;
+  button.style.color = theme.background;
+}
+
+function renderReader(message) {
+  activeMessage = message;
+  $("reader-empty").classList.add("hidden");
+  $("reader-content").classList.remove("hidden");
+  $("reply-form-wrap").classList.add("hidden");
+  $("reader-message").textContent = message.message_body;
+  status("read-status","");
+  openCinema(message.message_body);
+}
+
+async function claimMessage() {
+  const button = $("tab-read");
+  button.disabled = true;
+  status("read-status","Looking for a message…");
+  $("reader-empty").classList.remove("hidden");
+  $("reader-empty").textContent = "Looking for a message…";
+  $("reader-content").classList.add("hidden");
+  $("reply-form-wrap").classList.add("hidden");
+
+  try {
+    const result = await rpc("claim_message",{
+      p_reader_token:storedToken("st_reader_token")
+    });
+    const message = Array.isArray(result) ? result[0] : result;
+
+    if (!message || !message.message_id) {
+      activeMessage = null;
+      $("reader-empty").textContent =
+        "There aren't any new messages waiting right now. Try again later.";
+      status("read-status","");
+      return;
+    }
+
+    renderReader(message);
+  } catch (error) {
+    $("reader-empty").textContent = "We couldn't load a message just now.";
+    status("read-status",error.message,true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function skipMessage() {
+  if (!activeMessage) return;
+  const message = activeMessage;
+  status("read-status","Skipping this message…");
+  $("skip-message").disabled = true;
+  $("cinema-skip").disabled = true;
+
+  try {
+    await rpc("skip_message",{
+      p_message_id:message.message_id,
+      p_reader_token:storedToken("st_reader_token")
+    });
+    closeCinema();
+    clearReader();
+    status("read-status","Skipped. Find another message whenever you're ready.");
+  } catch (error) {
+    status("read-status",error.message,true);
+  } finally {
+    $("skip-message").disabled = false;
+    $("cinema-skip").disabled = false;
+  }
+}
+
+function choosePalette(palette) {
+  if (!themes[palette]) return;
+  selectedPalette = palette;
+  document.querySelectorAll("[data-palette]").forEach(button => {
+    button.setAttribute("aria-pressed",String(button.dataset.palette === palette));
+  });
+  applyCinemaTheme();
+}
+
+$("tab-write").addEventListener("click",() => showTab("write"));
+$("tab-read").addEventListener("click",() => {
+  showTab("read");
+  if (!activeMessage) claimMessage();
+});
+$("tab-replies").addEventListener("click",() => showTab("replies"));
+
+$("message-input").addEventListener("input",() => {
+  $("message-count").textContent = $("message-input").value.length + " / 1000";
+});
+$("reply-input").addEventListener("input",() => {
+  $("reply-count").textContent = $("reply-input").value.length + " / 1000";
+});
+
+$("write-form").addEventListener("submit",async event => {
+  event.preventDefault();
+  const body = $("message-input").value.trim();
+  if (!body) {
+    status("write-status","Write a little something first.",true);
+    return;
+  }
+
+  const button = $("send-message");
+  button.disabled = true;
+  status("write-status","Leaving your message…");
+
+  try {
+    const token = randomToken();
+    await rpc("submit_message",{
+      p_body:body,
+      p_writer_token:token
+    });
+    rememberWriter(token);
+    $("message-input").value = "";
+    $("message-count").textContent = "0 / 1000";
+    status("write-status","Your message has been left. Check Your replies later ♡");
+  } catch (error) {
+    status("write-status",error.message,true);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function showReplyForm() {
+  if (!activeMessage) return;
+  closeCinema();
+  $("reply-form-wrap").classList.remove("hidden");
+  $("reply-input").focus();
+  $("reply-form-wrap").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+$("open-reply").addEventListener("click",showReplyForm);
+$("cinema-reply").addEventListener("click",showReplyForm);
+
+$("cancel-reply").addEventListener("click",() => {
+  $("reply-form-wrap").classList.add("hidden");
+  if (activeMessage) openCinema(activeMessage.message_body);
+});
+
+$("skip-message").addEventListener("click",skipMessage);
+$("cinema-skip").addEventListener("click",skipMessage);
+$("cinema-close").addEventListener("click",closeCinema);
+
+document.querySelectorAll("[data-palette]").forEach(button => {
+  button.addEventListener("click",() => choosePalette(button.dataset.palette));
+});
+
+$("reply-form").addEventListener("submit",async event => {
+  event.preventDefault();
+  if (!activeMessage) {
+    status("read-status","Find a message first.",true);
+    return;
+  }
+
+  const body = $("reply-input").value.trim();
+  if (!body) {
+    status("read-status","Write your reply first.",true);
+    return;
+  }
+
+  const button = $("send-reply");
+  button.disabled = true;
+  status("read-status","Sending your reply…");
+
+  try {
+    await rpc("send_reply",{
+      p_message_id:activeMessage.message_id,
+      p_reader_token:storedToken("st_reader_token"),
+      p_reply:body,
+      p_palette:selectedPalette
+    });
+    closeCinema();
+    clearReader();
+    $("reader-empty").textContent =
+      "Your reply has been sent. Thank you for taking a moment with someone else's words.";
+    status("read-status","Reply sent ♡");
+  } catch (error) {
+    status("read-status",error.message,true);
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function makeReplyCard(reply) {
+  const theme = themes[reply.palette] || themes.red;
+  const card = document.createElement("article");
+  card.className = "reply-card";
+  card.style.background = theme.background;
+  card.style.borderColor = theme.secondary;
+
+  const label = document.createElement("div");
+  label.className = "reply-meta";
+  label.textContent = (reply.palette || "reply") + " · someone wrote back";
+  label.style.color = theme.accent;
+
+  const message = document.createElement("div");
+  message.className = "reply-message";
+  message.textContent = reply.reply_body || "";
+  message.style.color = theme.text;
+
+  card.append(label,message);
+  return card;
+}
+
+async function loadReplies() {
+  const button = $("refresh-replies");
+  button.disabled = true;
+  status("inbox-status","Checking for replies…");
+  const list = $("inbox-list");
+
+  try {
+    const tokens = writerTokens();
+
+    if (!tokens.length) {
+      list.replaceChildren();
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "You haven't left a message from this browser yet.";
+      list.append(empty);
+      status("inbox-status","");
+      return;
+    }
+
+    const allReplies = [];
+    for (const token of tokens) {
+      const rows = await rpc("read_replies",{p_writer_token:token});
+      if (Array.isArray(rows)) allReplies.push(...rows);
+    }
+
+    list.replaceChildren();
+
+    if (!allReplies.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "No replies just yet. Check back whenever you like.";
+      list.append(empty);
+      status("inbox-status","");
+      return;
+    }
+
+    const groups = new Map();
+    allReplies.forEach(reply => {
+      if (!groups.has(reply.message_id)) {
+        groups.set(reply.message_id,{
+          body:reply.message_body,
+          replies:[]
+        });
+      }
+      groups.get(reply.message_id).replies.push(reply);
+    });
+
+    for (const group of groups.values()) {
+      const section = document.createElement("section");
+      section.className = "reply-card";
+
+      const label = document.createElement("div");
+      label.className = "reply-meta";
+      label.textContent = "your message";
+
+      const original = document.createElement("div");
+      original.className = "reply-message";
+      original.textContent = group.body;
+      original.style.color = "var(--pistachio)";
+
+      const divider = document.createElement("div");
+      divider.className = "divider";
+
+      const replyLabel = document.createElement("div");
+      replyLabel.className = "reply-meta";
+      replyLabel.textContent = group.replies.length +
+        (group.replies.length === 1 ? " reply" : " replies");
+
+      section.append(label,original,divider,replyLabel);
+      group.replies.forEach(reply => section.append(makeReplyCard(reply)));
+      list.append(section);
+    }
+
+    status("inbox-status","All caught up ♡");
+  } catch (error) {
+    status("inbox-status",error.message,true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+$("refresh-replies").addEventListener("click",loadReplies);
+</script>
+</body>
+  </html>
